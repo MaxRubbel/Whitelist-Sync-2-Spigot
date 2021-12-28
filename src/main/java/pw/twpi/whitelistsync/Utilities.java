@@ -1,7 +1,7 @@
-package pw.twpi.whitelistsync2;
+package pw.twpi.whitelistsync;
 
-import pw.twpi.whitelistsync2.models.OppedPlayer;
-import pw.twpi.whitelistsync2.models.WhitelistedPlayer;
+import pw.twpi.whitelistsync.models.OppedPlayer;
+import pw.twpi.whitelistsync.models.WhitelistedPlayer;
 
 import java.util.ArrayList;
 

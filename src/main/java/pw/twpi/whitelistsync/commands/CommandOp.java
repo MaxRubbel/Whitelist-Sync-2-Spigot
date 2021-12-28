@@ -1,7 +1,8 @@
-package pw.twpi.whitelistsync2.commands;
+package pw.twpi.whitelistsync.commands;
 
-import pw.twpi.whitelistsync2.Utilities;
-import pw.twpi.whitelistsync2.service.BaseService;
+import org.bukkit.command.ConsoleCommandSender;
+import pw.twpi.whitelistsync.Utilities;
+import pw.twpi.whitelistsync.service.BaseService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -16,8 +17,8 @@ public class CommandOp implements CommandExecutor {
     private BaseService service;
     private Server server;
 
-    private final String WL_OP_MANAGE = "whitelistsync2.wlop.manage";
-    private final String WL_OP_VIEW = "whitelistsync2.wlop.view";
+    private final String WL_OP_MANAGE = "whitelistsync.wlop.manage";
+    private final String WL_OP_VIEW = "whitelistsync.wlop.view";
 
     public CommandOp(JavaPlugin plugin, BaseService service) {
         this.plugin = plugin;
@@ -32,7 +33,7 @@ public class CommandOp implements CommandExecutor {
                 //Action for showing list
                 if (args[0].equalsIgnoreCase("list")) {
 
-                    if(!sender.hasPermission(WL_OP_VIEW)) {
+                    if(!(sender instanceof ConsoleCommandSender) && !sender.hasPermission(WL_OP_VIEW)) {
                         sender.sendMessage("You do not have permission to use this command.");
                         return true;
                     }
@@ -42,7 +43,7 @@ public class CommandOp implements CommandExecutor {
                     return true;
                 } else if (args[0].equalsIgnoreCase("op")) {
                     // Actions for adding a player to whitelist
-                    if(!sender.hasPermission(WL_OP_MANAGE)) {
+                    if(!(sender instanceof ConsoleCommandSender) && !sender.hasPermission(WL_OP_MANAGE)) {
                         sender.sendMessage("You do not have permission to use this command.");
                         return true;
                     }
@@ -71,7 +72,7 @@ public class CommandOp implements CommandExecutor {
                     return true;
                 } else if (args[0].equalsIgnoreCase("deop")) {
                     // Actions for removing player from whitelist
-                    if(!sender.hasPermission(WL_OP_MANAGE)) {
+                    if(!(sender instanceof ConsoleCommandSender) && !sender.hasPermission(WL_OP_MANAGE)) {
                         sender.sendMessage("You do not have permission to use this command.");
                         return true;
                     }
@@ -100,7 +101,7 @@ public class CommandOp implements CommandExecutor {
                     return true;
                 } else if (args[0].equalsIgnoreCase("sync")) {
                     // Sync server to database
-                    if(!sender.hasPermission(WL_OP_MANAGE)) {
+                    if(!(sender instanceof ConsoleCommandSender) && !sender.hasPermission(WL_OP_MANAGE)) {
                         sender.sendMessage("You do not have permission to use this command.");
                         return true;
                     }
@@ -114,7 +115,7 @@ public class CommandOp implements CommandExecutor {
                     return true;
                 } else if (args[0].equalsIgnoreCase("copyservertodatabase")) {
                     // Sync server to database
-                    if(!sender.hasPermission(WL_OP_MANAGE)) {
+                    if(!(sender instanceof ConsoleCommandSender) && !sender.hasPermission(WL_OP_MANAGE)) {
                         sender.sendMessage("You do not have permission to use this command.");
                         return true;
                     }

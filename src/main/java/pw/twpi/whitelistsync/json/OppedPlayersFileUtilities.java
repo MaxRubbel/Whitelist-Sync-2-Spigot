@@ -1,8 +1,8 @@
-package pw.twpi.whitelistsync2.json;
+package pw.twpi.whitelistsync.json;
 
 import com.google.gson.*;
-import pw.twpi.whitelistsync2.WhitelistSync2;
-import pw.twpi.whitelistsync2.models.OppedPlayer;
+import pw.twpi.whitelistsync.WhitelistSync;
+import pw.twpi.whitelistsync.models.OppedPlayer;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -48,14 +48,14 @@ public class OppedPlayersFileUtilities {
         JsonArray oplist = null;
         try {
             // Read data as Json array from server directory
-            oplist = (JsonArray) parser.parse(new FileReader(WhitelistSync2.SERVER_FILEPATH + "/ops.json"));
+            oplist = (JsonArray) parser.parse(new FileReader(WhitelistSync.SERVER_FILEPATH + "/ops.json"));
             
-            // WhitelistSync2.LOGGER.debug("getOppedPlayersFromFile returned an array of " + oplist.size() + " entries.");
+            // WhitelistSync.LOGGER.debug("getOppedPlayersFromFile returned an array of " + oplist.size() + " entries.");
         } catch (FileNotFoundException e) {
-            WhitelistSync2.LOGGER.severe("ops.json file not found.");
+            WhitelistSync.LOGGER.severe("ops.json file not found.");
             e.printStackTrace();
         } catch (JsonParseException e) {
-            WhitelistSync2.LOGGER.severe("ops.json parse error.");
+            WhitelistSync.LOGGER.severe("ops.json parse error.");
             e.printStackTrace();
         }
         

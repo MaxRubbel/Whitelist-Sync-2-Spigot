@@ -46,9 +46,9 @@ Looking for a forge mod? Find it on the [WhitelistSync2 GitHub](https://github.c
 
 
 ## Permissions (as of WL Sync v2.2.3)
-- **whitelistsync2.wl.manage**: Allows the user to update the whitelist using the add, remove, sync, and copyServerToDatabase commands.
-- **whitelistsync2.wl.view**: Allows the user to view whitelisted players using the list command.
-- **whitelistsync2.wlop.manage**: Allows the user to update the op list using the add, remove, sync, and copyServerToDatabase commands.
-- **whitelistsync2.wlop.view**: Allows the user to view a list of opped players using the list command.
+- **whitelistsync.wl.manage**: Allows the user to update the whitelist using the add, remove, sync, and copyServerToDatabase commands.
+- **whitelistsync.wl.view**: Allows the user to view whitelisted players using the list command.
+- **whitelistsync.wlop.manage**: Allows the user to update the op list using the add, remove, sync, and copyServerToDatabase commands.
+- **whitelistsync.wlop.view**: Allows the user to view a list of opped players using the list command.
 
 Please post your bugs to [GitHub](https://github.com/PotatoSauceVFX/Whitelist-Sync-2-Spigot/issues "GitHub") or better yet make a pull request!

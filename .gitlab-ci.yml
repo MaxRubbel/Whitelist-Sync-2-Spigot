@@ -1,0 +1,4 @@
+include:
+  - project: 'minecraft/releases'
+    ref: main
+    file: '/.gitlab-ci.yml'

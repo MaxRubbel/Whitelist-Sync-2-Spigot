@@ -1,8 +1,8 @@
-# General Settings
+ # General Settings
 general:
 
   #Should be either "SQLITE" OR "MYSQL"
-  sync-mode: SQLITE
+  sync-mode: MYSQL
 
   #Wheather or not Whitelist Sync Should Sync Ops
   sync-ops: false
@@ -17,7 +17,7 @@ sqlite:
 # Settings Related to the MYSQL Database Sync Mode
 mysql:
   #Name of the database
-  database-name: WhitelistSync
+  database-name: whitelist
 
   #IP of the MYSQL Server
   ip: localhost
@@ -26,7 +26,7 @@ mysql:
   port: 3306
 
   #Login Information (This SHOULD NOT be root) I am not responsible for your security issues ;)
-  username: root
+  username: whitelist
   password: password
 
   #Time in seconds for the service to check the database for changes

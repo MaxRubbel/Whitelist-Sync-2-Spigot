@@ -1,8 +1,8 @@
-package pw.twpi.whitelistsync2.json;
+package pw.twpi.whitelistsync.json;
 
 import com.google.gson.*;
-import pw.twpi.whitelistsync2.WhitelistSync2;
-import pw.twpi.whitelistsync2.models.WhitelistedPlayer;
+import pw.twpi.whitelistsync.WhitelistSync;
+import pw.twpi.whitelistsync.models.WhitelistedPlayer;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -49,19 +49,19 @@ public class WhitelistedPlayersFileUtilities {
         JsonArray whitelist = null;
         try {
             // Read data as Json array from server directory
-            FileReader fileReader = new FileReader(WhitelistSync2.SERVER_FILEPATH + "/whitelist.json");
+            FileReader fileReader = new FileReader(WhitelistSync.SERVER_FILEPATH + "/whitelist.json");
             whitelist = (JsonArray) parser.parse(fileReader);
 
             fileReader.close();
-            // WhitelistSync2.LOGGER.debug("getWhitelistedPlayersFromFile returned an array of " + whitelist.size() + " entries.");
+            // WhitelistSync.LOGGER.debug("getWhitelistedPlayersFromFile returned an array of " + whitelist.size() + " entries.");
         } catch (FileNotFoundException e) {
-            WhitelistSync2.LOGGER.severe("whitelist.json file not found.");
+            WhitelistSync.LOGGER.severe("whitelist.json file not found.");
             e.printStackTrace();
         } catch (JsonParseException e) {
-            WhitelistSync2.LOGGER.severe("whitelist.json parse error.");
+            WhitelistSync.LOGGER.severe("whitelist.json parse error.");
             e.printStackTrace();
         } catch (IOException e) {
-            WhitelistSync2.LOGGER.severe("whitelist.json read error.");
+            WhitelistSync.LOGGER.severe("whitelist.json read error.");
             e.printStackTrace();
         }
 

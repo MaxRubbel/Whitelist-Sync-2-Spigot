@@ -1,4 +1,4 @@
-package pw.twpi.whitelistsync2.models;
+package pw.twpi.whitelistsync.models;
 
 
 /**

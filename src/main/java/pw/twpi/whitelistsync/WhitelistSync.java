@@ -1,19 +1,18 @@
-package pw.twpi.whitelistsync2;
+package pw.twpi.whitelistsync;
 
-import pw.twpi.whitelistsync2.commands.CommandOp;
-import pw.twpi.whitelistsync2.commands.CommandWhitelist;
-import pw.twpi.whitelistsync2.service.BaseService;
-import pw.twpi.whitelistsync2.service.MySqlService;
-import pw.twpi.whitelistsync2.service.SqLiteService;
-import pw.twpi.whitelistsync2.service.SyncThread;
+import pw.twpi.whitelistsync.commands.CommandOp;
+import pw.twpi.whitelistsync.commands.CommandWhitelist;
+import pw.twpi.whitelistsync.service.BaseService;
+import pw.twpi.whitelistsync.service.MySqlService;
+import pw.twpi.whitelistsync.service.SqLiteService;
+import pw.twpi.whitelistsync.service.SyncThread;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class WhitelistSync2 extends JavaPlugin {
+public class WhitelistSync extends JavaPlugin {
 
     public static FileConfiguration CONFIG;
     public Server server = getServer();

@@ -1,10 +1,10 @@
-package pw.twpi.whitelistsync2.service;
+package pw.twpi.whitelistsync.service;
 
-import pw.twpi.whitelistsync2.WhitelistSync2;
-import pw.twpi.whitelistsync2.json.OppedPlayersFileUtilities;
-import pw.twpi.whitelistsync2.json.WhitelistedPlayersFileUtilities;
-import pw.twpi.whitelistsync2.models.OppedPlayer;
-import pw.twpi.whitelistsync2.models.WhitelistedPlayer;
+import pw.twpi.whitelistsync.WhitelistSync;
+import pw.twpi.whitelistsync.json.OppedPlayersFileUtilities;
+import pw.twpi.whitelistsync.json.WhitelistedPlayersFileUtilities;
+import pw.twpi.whitelistsync.models.OppedPlayer;
+import pw.twpi.whitelistsync.models.WhitelistedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -21,22 +21,22 @@ public class MySqlService implements BaseService {
     private final String password;
 
     public MySqlService() {
-        this.databaseName = WhitelistSync2.CONFIG.getString("mysql.database-name");
-        this.url = "jdbc:mysql://" + WhitelistSync2.CONFIG.getString("mysql.ip") + ":" + WhitelistSync2.CONFIG.getString("mysql.port") + "/?useSSL=false";
-        this.username = WhitelistSync2.CONFIG.getString("mysql.username");
-        this.password = WhitelistSync2.CONFIG.getString("mysql.password");
+        this.databaseName = WhitelistSync.CONFIG.getString("mysql.database-name");
+        this.url = "jdbc:mysql://" + WhitelistSync.CONFIG.getString("mysql.ip") + ":" + WhitelistSync.CONFIG.getString("mysql.port") + "/?useSSL=false";
+        this.username = WhitelistSync.CONFIG.getString("mysql.username");
+        this.password = WhitelistSync.CONFIG.getString("mysql.password");
     }
 
     // Function used to initialize the database file
     @Override
     public boolean initializeDatabase() {
-        WhitelistSync2.LOGGER.info("Setting up the MySQL service...");
+        WhitelistSync.LOGGER.info("Setting up the MySQL service...");
         boolean isSuccess = true;
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
         } catch (Exception e) {
-            WhitelistSync2.LOGGER.severe("Failed to init mysql-connector. Is the library missing?");
+            WhitelistSync.LOGGER.severe("Failed to init mysql-connector. Is the library missing?");
             e.printStackTrace();
             isSuccess = false;
         }
@@ -45,10 +45,10 @@ public class MySqlService implements BaseService {
         if (isSuccess) {
             try {
                 Connection conn = DriverManager.getConnection(url, username, password);
-                WhitelistSync2.LOGGER.info("Connected to " + url + " successfully!");
+                WhitelistSync.LOGGER.info("Connected to " + url + " successfully!");
                 conn.close();
             } catch (SQLException e) {
-                WhitelistSync2.LOGGER.severe("Failed to connect to the mySQL database! Did you set one up in the config?");
+                WhitelistSync.LOGGER.severe("Failed to connect to the mySQL database! Did you set one up in the config?");
                 e.printStackTrace();
                 isSuccess = false;
             }
@@ -79,7 +79,7 @@ public class MySqlService implements BaseService {
                 stmt2.close();
 
                 // Create opped players table if enabled
-                if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+                if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
                     sql = "CREATE TABLE IF NOT EXISTS " + databaseName + ".op ("
                             + "`uuid` VARCHAR(60) NOT NULL,"
                             + "`name` VARCHAR(20) NOT NULL,"
@@ -107,7 +107,7 @@ public class MySqlService implements BaseService {
                         PreparedStatement stmt5 = conn.prepareStatement(sql);
                         stmt5.execute();
                         stmt5.close();
-                        WhitelistSync2.LOGGER.info("Removed unused op table \"level\" column.");
+                        WhitelistSync.LOGGER.info("Removed unused op table \"level\" column.");
                     }
                     rs.close();
                     stmt4.close();
@@ -129,17 +129,17 @@ public class MySqlService implements BaseService {
                         PreparedStatement stmt6 = conn.prepareStatement(sql);
                         stmt6.execute();
                         stmt6.close();
-                        WhitelistSync2.LOGGER.info("Removed unused op table \"bypassesPlayerLimit\" column.");
+                        WhitelistSync.LOGGER.info("Removed unused op table \"bypassesPlayerLimit\" column.");
                     }
                     rs1.close();
                     stmt5.close();
 
                 }
 
-                WhitelistSync2.LOGGER.info("Setup MySQL database!");
+                WhitelistSync.LOGGER.info("Setup MySQL database!");
                 conn.close();
             } catch (Exception e) {
-                WhitelistSync2.LOGGER.severe("Error initializing database and database tables.");
+                WhitelistSync.LOGGER.severe("Error initializing database and database tables.");
                 e.printStackTrace();
                 isSuccess = false;
             }
@@ -182,7 +182,7 @@ public class MySqlService implements BaseService {
             conn.close();
         } catch (SQLException e) {
             // Something is wrong...
-            WhitelistSync2.LOGGER.severe("Error querying whitelisted players from database!");
+            WhitelistSync.LOGGER.severe("Error querying whitelisted players from database!");
             e.printStackTrace();
         }
         return whitelistedPlayers;
@@ -193,7 +193,7 @@ public class MySqlService implements BaseService {
         // ArrayList for opped players.
         ArrayList<OppedPlayer> oppedPlayers = new ArrayList<>();
 
-        if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+        if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
             try {
                 // Keep track of records.
                 int records = 0;
@@ -221,11 +221,11 @@ public class MySqlService implements BaseService {
                 stmt.close();
                 conn.close();
             } catch (SQLException e) {
-                WhitelistSync2.LOGGER.severe("Error querying opped players from database!");
+                WhitelistSync.LOGGER.severe("Error querying opped players from database!");
                 e.printStackTrace();
             }
         } else {
-            WhitelistSync2.LOGGER.severe("Op list syncing is currently disabled in your config. "
+            WhitelistSync.LOGGER.severe("Op list syncing is currently disabled in your config. "
                     + "Please enable it and restart the server to use this feature.");
         }
 
@@ -274,7 +274,7 @@ public class MySqlService implements BaseService {
 
             return true;
         } catch (SQLException e) {
-            WhitelistSync2.LOGGER.severe("Failed to update database with local records.");
+            WhitelistSync.LOGGER.severe("Failed to update database with local records.");
             e.printStackTrace();
         }
 
@@ -286,7 +286,7 @@ public class MySqlService implements BaseService {
         // Load local opped players to memory.
         ArrayList<OppedPlayer> oppedPlayers = OppedPlayersFileUtilities.getOppedPlayers();
 
-        if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+        if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
             // TODO: Start job on thread to avoid lag?
             // Keep track of records.
             int records = 0;
@@ -314,11 +314,11 @@ public class MySqlService implements BaseService {
 
                 return true;
             } catch (SQLException e) {
-                WhitelistSync2.LOGGER.severe("Failed to update database with local records.");
+                WhitelistSync.LOGGER.severe("Failed to update database with local records.");
                 e.printStackTrace();
             }
         } else {
-            WhitelistSync2.LOGGER.severe("Op list syncing is currently disabled in your config. "
+            WhitelistSync.LOGGER.severe("Op list syncing is currently disabled in your config. "
                     + "Please enable it and restart the server to use this feature.");
         }
 
@@ -352,7 +352,7 @@ public class MySqlService implements BaseService {
                             //WhitelistSync2.LOGGER.debug("Added " + name + " to whitelist.");
                             records++;
                         } catch (NullPointerException e) {
-                            WhitelistSync2.LOGGER.severe("Player is null?");
+                            WhitelistSync.LOGGER.severe("Player is null?");
                             e.printStackTrace();
                         }
                     }
@@ -373,7 +373,7 @@ public class MySqlService implements BaseService {
             conn.close();
             return true;
         } catch (SQLException e) {
-            WhitelistSync2.LOGGER.severe("Error querying whitelisted players from database!");
+            WhitelistSync.LOGGER.severe("Error querying whitelisted players from database!");
             e.printStackTrace();
         }
 
@@ -382,7 +382,7 @@ public class MySqlService implements BaseService {
 
     @Override
     public boolean copyDatabaseOppedPlayersToLocal(Server server) {
-        if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+        if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
 
             try {
                 int records = 0;
@@ -409,7 +409,7 @@ public class MySqlService implements BaseService {
                                 //WhitelistSync2.LOGGER.debug("Opped " + name + ".");
                                 records++;
                             } catch (NullPointerException e) {
-                                WhitelistSync2.LOGGER.severe("Player is null?");
+                                WhitelistSync.LOGGER.severe("Player is null?");
                                 e.printStackTrace();
                             }
                         }
@@ -430,11 +430,11 @@ public class MySqlService implements BaseService {
                 conn.close();
                 return true;
             } catch (SQLException e) {
-                WhitelistSync2.LOGGER.severe("Error querying opped players from database!");
+                WhitelistSync.LOGGER.severe("Error querying opped players from database!");
                 e.printStackTrace();
             }
         } else {
-            WhitelistSync2.LOGGER.severe("Op list syncing is currently disabled in your config. "
+            WhitelistSync.LOGGER.severe("Op list syncing is currently disabled in your config. "
                     + "Please enable it and restart the server to use this feature.");
         }
 
@@ -462,7 +462,7 @@ public class MySqlService implements BaseService {
             return true;
 
         } catch (SQLException e) {
-            WhitelistSync2.LOGGER.severe("Error adding " + player.getName() + " to whitelist database!");
+            WhitelistSync.LOGGER.severe("Error adding " + player.getName() + " to whitelist database!");
             e.printStackTrace();
         }
 
@@ -471,7 +471,7 @@ public class MySqlService implements BaseService {
 
     @Override
     public boolean addOppedPlayer(OfflinePlayer player) {
-        if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+        if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
             try {
                 // Open connection=
                 Connection conn = DriverManager.getConnection(url, username, password);
@@ -491,11 +491,11 @@ public class MySqlService implements BaseService {
                 return true;
 
             } catch (SQLException e) {
-                WhitelistSync2.LOGGER.severe("Error opping " + player.getName() + " !");
+                WhitelistSync.LOGGER.severe("Error opping " + player.getName() + " !");
                 e.printStackTrace();
             }
         } else {
-            WhitelistSync2.LOGGER.severe("Op list syncing is currently disabled in your config. "
+            WhitelistSync.LOGGER.severe("Op list syncing is currently disabled in your config. "
                     + "Please enable it and restart the server to use this feature.");
         }
 
@@ -523,7 +523,7 @@ public class MySqlService implements BaseService {
             return true;
 
         } catch (SQLException e) {
-            WhitelistSync2.LOGGER.severe("Error removing " + player.getName() + " to whitelist database!");
+            WhitelistSync.LOGGER.severe("Error removing " + player.getName() + " to whitelist database!");
             e.printStackTrace();
         }
 
@@ -532,7 +532,7 @@ public class MySqlService implements BaseService {
 
     @Override
     public boolean removeOppedPlayer(OfflinePlayer player) {
-        if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+        if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
             try {
                 // Open connection=
                 Connection conn = DriverManager.getConnection(url, username, password);
@@ -552,11 +552,11 @@ public class MySqlService implements BaseService {
                 return true;
 
             } catch (SQLException e) {
-                WhitelistSync2.LOGGER.severe("Error deopping " + player.getName() + ".");
+                WhitelistSync.LOGGER.severe("Error deopping " + player.getName() + ".");
                 e.printStackTrace();
             }
         } else {
-            WhitelistSync2.LOGGER.severe("Op list syncing is currently disabled in your config. "
+            WhitelistSync.LOGGER.severe("Op list syncing is currently disabled in your config. "
                     + "Please enable it and restart the server to use this feature.");
         }
 
