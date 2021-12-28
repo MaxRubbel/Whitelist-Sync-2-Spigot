@@ -1,7 +1,7 @@
-package pw.twpi.whitelistsync2.service;
+package pw.twpi.whitelistsync.service;
 
-import pw.twpi.whitelistsync2.models.OppedPlayer;
-import pw.twpi.whitelistsync2.models.WhitelistedPlayer;
+import pw.twpi.whitelistsync.models.OppedPlayer;
+import pw.twpi.whitelistsync.models.WhitelistedPlayer;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 

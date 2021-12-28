@@ -1,10 +1,10 @@
-package pw.twpi.whitelistsync2.service;
+package pw.twpi.whitelistsync.service;
 
-import pw.twpi.whitelistsync2.WhitelistSync2;
-import pw.twpi.whitelistsync2.json.OppedPlayersFileUtilities;
-import pw.twpi.whitelistsync2.json.WhitelistedPlayersFileUtilities;
-import pw.twpi.whitelistsync2.models.OppedPlayer;
-import pw.twpi.whitelistsync2.models.WhitelistedPlayer;
+import pw.twpi.whitelistsync.WhitelistSync;
+import pw.twpi.whitelistsync.json.OppedPlayersFileUtilities;
+import pw.twpi.whitelistsync.json.WhitelistedPlayersFileUtilities;
+import pw.twpi.whitelistsync.models.OppedPlayer;
+import pw.twpi.whitelistsync.models.WhitelistedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -19,29 +19,29 @@ public class SqLiteService implements BaseService {
     // Function used to initialize the database file
     @Override
     public boolean initializeDatabase() {
-        WhitelistSync2.LOGGER.info("Setting up the SQLite service...");
-        File databaseFile = new File(WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+        WhitelistSync.LOGGER.info("Setting up the SQLite service...");
+        File databaseFile = new File(WhitelistSync.CONFIG.getString("sqlite.database-path"));
         boolean isSuccess = true;
 
         try {
             Class.forName("org.sqlite.JDBC").newInstance();
         } catch (Exception e) {
-            WhitelistSync2.LOGGER.severe("Failed to init sqlite connector. Is the library missing?");
+            WhitelistSync.LOGGER.severe("Failed to init sqlite connector. Is the library missing?");
             e.printStackTrace();
             isSuccess = false;
         }
 
         // If database does not exist, create a new one
         if (!databaseFile.exists() && isSuccess) {
-            String url = "jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path");
+            String url = "jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path");
             try {
                 Connection conn = DriverManager.getConnection(url);
 
-                WhitelistSync2.LOGGER.info("A new database \"" + WhitelistSync2.CONFIG.getString("sqlite.database-path") + "\" has been created.");
+                WhitelistSync.LOGGER.info("A new database \"" + WhitelistSync.CONFIG.getString("sqlite.database-path") + "\" has been created.");
                 conn.close();
             } catch (SQLException e) {
                 // Something is wrong...
-                WhitelistSync2.LOGGER.severe("Failed to create new SQLite database file!");
+                WhitelistSync.LOGGER.severe("Failed to create new SQLite database file!");
                 e.printStackTrace();
                 isSuccess = false;
             }
@@ -50,10 +50,10 @@ public class SqLiteService implements BaseService {
         // Create whitelist table if it doesn't exist.
         if (isSuccess) {
             try {
-                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path"));
 
                 // If the conn is valid, everything below this will run
-                WhitelistSync2.LOGGER.info("Connected to SQLite database successfully!");
+                WhitelistSync.LOGGER.info("Connected to SQLite database successfully!");
 
                 // SQL statement for creating a new table
                 String sql = "CREATE TABLE IF NOT EXISTS whitelist (\n"
@@ -64,7 +64,7 @@ public class SqLiteService implements BaseService {
                 stmt.execute(sql);
                 stmt.close();
 
-                if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+                if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
                     // SQL statement for creating a new table
                     sql = "CREATE TABLE IF NOT EXISTS op (\n"
                             + "	uuid text NOT NULL PRIMARY KEY,\n"
@@ -78,7 +78,7 @@ public class SqLiteService implements BaseService {
                 conn.close();
             } catch (SQLException e) {
                 // Something is wrong...
-                WhitelistSync2.LOGGER.severe("Error creating op or whitelist table!\n" + e.getMessage());
+                WhitelistSync.LOGGER.severe("Error creating op or whitelist table!\n" + e.getMessage());
                 e.printStackTrace();
                 isSuccess = false;
             }
@@ -97,7 +97,7 @@ public class SqLiteService implements BaseService {
             int records = 0;
 
             // Connect to database.
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path"));
             long startTime = System.currentTimeMillis();
 
             String sql = "SELECT uuid, name, whitelisted FROM whitelist WHERE whitelisted = 1;";
@@ -118,7 +118,7 @@ public class SqLiteService implements BaseService {
             stmt.close();
             conn.close();
         } catch (SQLException e) {
-            WhitelistSync2.LOGGER.severe("Error querying whitelisted players from database!");
+            WhitelistSync.LOGGER.severe("Error querying whitelisted players from database!");
             e.printStackTrace();
         }
 
@@ -130,13 +130,13 @@ public class SqLiteService implements BaseService {
         // ArrayList for opped players.
         ArrayList<OppedPlayer> oppedPlayers = new ArrayList<>();
 
-        if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+        if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
             try {
                 // Keep track of records.
                 int records = 0;
 
                 // Connect to database.
-                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path"));
                 long startTime = System.currentTimeMillis();
 
                 String sql = "SELECT uuid, name FROM op WHERE isOp = 1;";
@@ -157,12 +157,12 @@ public class SqLiteService implements BaseService {
                 stmt.close();
                 conn.close();
             } catch (SQLException e) {
-                WhitelistSync2.LOGGER.severe("Error querying opped players from database!");
+                WhitelistSync.LOGGER.severe("Error querying opped players from database!");
                 e.printStackTrace();
             }
 
         } else {
-            WhitelistSync2.LOGGER.severe("Op list syncing is currently disabled in your config. "
+            WhitelistSync.LOGGER.severe("Op list syncing is currently disabled in your config. "
                     + "Please enable it and restart the server to use this feature.");
         }
 
@@ -189,7 +189,7 @@ public class SqLiteService implements BaseService {
         int records = 0;
         try {
             // Connect to database.
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path"));
             long startTime = System.currentTimeMillis();
             // Loop through local whitelist and insert into database.
             for (WhitelistedPlayer player : whitelistedPlayers) {
@@ -211,7 +211,7 @@ public class SqLiteService implements BaseService {
 
             return true;
         } catch (SQLException e) {
-            WhitelistSync2.LOGGER.severe("Failed to update database with local records.");
+            WhitelistSync.LOGGER.severe("Failed to update database with local records.");
             e.printStackTrace();
         }
 
@@ -223,13 +223,13 @@ public class SqLiteService implements BaseService {
         // Load local opped players to memory.
         ArrayList<OppedPlayer> oppedPlayers = OppedPlayersFileUtilities.getOppedPlayers();
 
-        if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+        if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
             // TODO: Start job on thread to avoid lag?
             // Keep track of records.
             int records = 0;
             try {
                 // Connect to database.
-                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path"));
                 long startTime = System.currentTimeMillis();
                 // Loop through local opped players and insert into database.
                 for (OppedPlayer player : oppedPlayers) {
@@ -251,11 +251,11 @@ public class SqLiteService implements BaseService {
 
                 return true;
             } catch (SQLException e) {
-                WhitelistSync2.LOGGER.severe("Failed to update database with local records.");
+                WhitelistSync.LOGGER.severe("Failed to update database with local records.");
                 e.printStackTrace();
             }
         } else {
-            WhitelistSync2.LOGGER.severe("Op list syncing is currently disabled in your config. "
+            WhitelistSync.LOGGER.severe("Op list syncing is currently disabled in your config. "
                     + "Please enable it and restart the server to use this feature.");
         }
 
@@ -267,7 +267,7 @@ public class SqLiteService implements BaseService {
         try {
             int records = 0;
 
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path"));
             long startTime = System.currentTimeMillis();
 
             String sql = "SELECT name, uuid, whitelisted FROM whitelist;";
@@ -288,7 +288,7 @@ public class SqLiteService implements BaseService {
                             // WhitelistSync2.LOGGER.debug("Added " + name + " to whitelist.");
                             records++;
                         } catch (NullPointerException e) {
-                            WhitelistSync2.LOGGER.severe("Player is null?");
+                            WhitelistSync.LOGGER.severe("Player is null?");
                             e.printStackTrace();
                         }
                     }
@@ -309,7 +309,7 @@ public class SqLiteService implements BaseService {
             return true;
 
         } catch (SQLException e) {
-            WhitelistSync2.LOGGER.severe("Error querying whitelisted players from database!");
+            WhitelistSync.LOGGER.severe("Error querying whitelisted players from database!");
             e.printStackTrace();
         }
 
@@ -319,12 +319,12 @@ public class SqLiteService implements BaseService {
     @Override
     public boolean copyDatabaseOppedPlayersToLocal(Server server) {
 
-        if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+        if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
 
             try {
                 int records = 0;
 
-                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path"));
                 long startTime = System.currentTimeMillis();
 
                 String sql = "SELECT name, uuid, isOp FROM op;";
@@ -345,7 +345,7 @@ public class SqLiteService implements BaseService {
                                 // WhitelistSync2.LOGGER.debug("Opped " + name + ".");
                                 records++;
                             } catch (NullPointerException e) {
-                                WhitelistSync2.LOGGER.severe("Player is null?");
+                                WhitelistSync.LOGGER.severe("Player is null?");
                                 e.printStackTrace();
                             }
                         }
@@ -364,11 +364,11 @@ public class SqLiteService implements BaseService {
                 conn.close();
                 return true;
             } catch (SQLException e) {
-                WhitelistSync2.LOGGER.severe("Error querying opped players from database!");
+                WhitelistSync.LOGGER.severe("Error querying opped players from database!");
                 e.printStackTrace();
             }
         } else {
-            WhitelistSync2.LOGGER.severe("Op list syncing is currently disabled in your config. "
+            WhitelistSync.LOGGER.severe("Op list syncing is currently disabled in your config. "
                     + "Please enable it and restart the server to use this feature.");
         }
 
@@ -379,7 +379,7 @@ public class SqLiteService implements BaseService {
     public boolean addWhitelistPlayer(OfflinePlayer player) {
         try {
             // Open connection
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path"));
 
             // Start time.
             long startTime = System.currentTimeMillis();
@@ -398,7 +398,7 @@ public class SqLiteService implements BaseService {
             return true;
 
         } catch (SQLException e) {
-            WhitelistSync2.LOGGER.severe("Error adding " + player.getName() + " to whitelist database!");
+            WhitelistSync.LOGGER.severe("Error adding " + player.getName() + " to whitelist database!");
             e.printStackTrace();
         }
 
@@ -407,10 +407,10 @@ public class SqLiteService implements BaseService {
 
     @Override
     public boolean addOppedPlayer(OfflinePlayer player) {
-        if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+        if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
             try {
                 // Open connection
-                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path"));
 
                 // Start time.
                 long startTime = System.currentTimeMillis();
@@ -428,11 +428,11 @@ public class SqLiteService implements BaseService {
                 return true;
 
             } catch (SQLException e) {
-                WhitelistSync2.LOGGER.severe("Error opping " + player.getName() + " !");
+                WhitelistSync.LOGGER.severe("Error opping " + player.getName() + " !");
                 e.printStackTrace();
             }
         } else {
-            WhitelistSync2.LOGGER.severe("Op list syncing is currently disabled in your config. "
+            WhitelistSync.LOGGER.severe("Op list syncing is currently disabled in your config. "
                     + "Please enable it and restart the server to use this feature.");
         }
 
@@ -443,7 +443,7 @@ public class SqLiteService implements BaseService {
     public boolean removeWhitelistPlayer(OfflinePlayer player) {
         try {
             // Open connection
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path"));
 
             // Start time.
             long startTime = System.currentTimeMillis();
@@ -461,7 +461,7 @@ public class SqLiteService implements BaseService {
             return true;
 
         } catch (SQLException e) {
-            WhitelistSync2.LOGGER.severe("Error removing " + player.getName() + " to whitelist database!");
+            WhitelistSync.LOGGER.severe("Error removing " + player.getName() + " to whitelist database!");
             e.printStackTrace();
         }
 
@@ -470,10 +470,10 @@ public class SqLiteService implements BaseService {
 
     @Override
     public boolean removeOppedPlayer(OfflinePlayer player) {
-        if (WhitelistSync2.CONFIG.getBoolean("general.sync-ops")) {
+        if (WhitelistSync.CONFIG.getBoolean("general.sync-ops")) {
             try {
                 // Open connection
-                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync2.CONFIG.getString("sqlite.database-path"));
+                Connection conn = DriverManager.getConnection("jdbc:sqlite:" + WhitelistSync.CONFIG.getString("sqlite.database-path"));
 
                 // Start time.
                 long startTime = System.currentTimeMillis();
@@ -491,11 +491,11 @@ public class SqLiteService implements BaseService {
                 return true;
 
             } catch (SQLException e) {
-                WhitelistSync2.LOGGER.severe("Error deopping " + player.getName() + ".");
+                WhitelistSync.LOGGER.severe("Error deopping " + player.getName() + ".");
                 e.printStackTrace();
             }
         } else {
-            WhitelistSync2.LOGGER.severe("Op list syncing is currently disabled in your config. "
+            WhitelistSync.LOGGER.severe("Op list syncing is currently disabled in your config. "
                     + "Please enable it and restart the server to use this feature.");
         }
 

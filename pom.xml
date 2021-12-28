@@ -5,8 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>pw.twpi</groupId>
-    <artifactId>whitelistsync2</artifactId>
+    <artifactId>whitelist-sync</artifactId>
     <version>1.18.1-2.2.3</version>
+
+    <name>WhitelistSync</name>
+
     <build>
         <plugins>
             <plugin>
@@ -51,7 +54,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

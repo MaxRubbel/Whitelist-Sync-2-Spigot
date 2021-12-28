@@ -1,6 +1,6 @@
-name: WhitelistSync2
-version: 1.18.1-2.2.3
-main: pw.twpi.whitelistsync2.WhitelistSync2
+name: WhitelistSync
+version: 3.0.0
+main: pw.twpi.whitelistsync.WhitelistSync
 
 commands:
   wl:
@@ -12,19 +12,19 @@ commands:
     usage: /wlop <list|op|deop|sync|copyServerToDatabase>
 
 permissions:
-  whitelistsync2.wl.view:
+  whitelistsync.wl.view:
     description: Allows the user to view whitelisted players using the list command.
     default: false
-  whitelistsync2.wl.manage:
+  whitelistsync.wl.manage:
     description: Allows the user to update the whitelist using the add, remove, sync, and copyServerToDatabase commands.
     default: false
     children:
-      whitelistsync2.wl.view: true
-  whitelistsync2.wlop.view:
+      whitelistsync.wl.view: true
+  whitelistsync.wlop.view:
     description: Allows the user to view a list of opped players using the list command.
     default: false
-  whitelistsync2.wlop.manage:
+  whitelistsync.wlop.manage:
     description: Allows the user to update the op list using the add, remove, sync, and copyServerToDatabase commands.
     default: false
     children:
-      whitelistsync2.wlop.view: true
+      whitelistsync.wlop.view: true

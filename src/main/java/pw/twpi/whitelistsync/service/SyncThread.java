@@ -1,6 +1,6 @@
-package pw.twpi.whitelistsync2.service;
+package pw.twpi.whitelistsync.service;
 
-import pw.twpi.whitelistsync2.WhitelistSync2;
+import pw.twpi.whitelistsync.WhitelistSync;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -46,7 +46,7 @@ public class SyncThread {
                 }
 
             } else {
-                WhitelistSync2.LOGGER.severe("Error in the Sync Thread! "
+                WhitelistSync.LOGGER.severe("Error in the Sync Thread! "
                         + "Nothing will be synced! Please report to author!");
                 try {
                     Thread.sleep(10000);
